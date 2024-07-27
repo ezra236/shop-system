@@ -1,5 +1,4 @@
 import hashlib
-import getpass
 import secrets
 import tkinter as tk
 from tkinter import simpledialog, messagebox
@@ -73,6 +72,9 @@ def admin_options():
     admin_options_window = tk.Toplevel()
     admin_options_window.title("Admin Options")
 
+    # Set the window size to laptop screen size
+    admin_options_window.geometry("1366x768")
+
     new_product_button = tk.Button(admin_options_window, text="Add New Product", command=add_new_product)
     new_product_button.pack(pady=10)
 
@@ -93,37 +95,62 @@ def change_password():
         return
     admin.change_password(new_password)
 
-def customer_login():
+def customer_login(parent_window):
     while True:
-        product_choice = simpledialog.askstring("Customer", shop.display_available_products() + "\nEnter the product you want to add to your cart:")
+        product_choice = simpledialog.askstring("Customer", shop.display_available_products() + "\nEnter the product you want to add to your cart:", parent=parent_window)
         if product_choice is None:
             break
         if product_choice.lower() in shop.products:
-            quantity = simpledialog.askinteger("Quantity", f"How many {product_choice.capitalize()}{'s' if shop.products[product_choice.lower()]['quantity'] > 1 else ''} do you want?")
+            quantity = simpledialog.askinteger("Quantity", f"How many {product_choice.capitalize()}{'s' if shop.products[product_choice.lower()]['quantity'] > 1 else ''} do you want?", parent=parent_window)
             if quantity is not None:
                 message = shop.add_to_cart(product_choice.lower(), quantity)
-                messagebox.showinfo("Add to Cart", message)
+                messagebox.showinfo("Add to Cart", message, parent=parent_window)
         else:
-            messagebox.showerror("Error", "Invalid product. Please choose from the available products.")
-        add_or_finish = messagebox.askyesno("Continue", "Do you want to add more products?")
+            messagebox.showerror("Error", "Invalid product. Please choose from the available products.", parent=parent_window)
+        
+        add_or_finish = messagebox.askyesno("Continue", "Do you want to add more products?", parent=parent_window)
         if not add_or_finish:
             break
+    
+    # Destroy the fullscreen window when done
+    parent_window.destroy()
+    
     display_receipt()
 
 def display_receipt():
     receipt = shop.checkout()
     messagebox.showinfo("Receipt", receipt)
 
+def start_customer_login(root):
+    # Create a new top-level window with laptop screen size
+    customer_window = tk.Toplevel(root)
+    customer_window.title("Customer Interaction")
+    
+    # Set the window size to laptop screen size
+    customer_window.geometry("1366x768")
+
+    # Call the customer login function with customer_window as parent
+    customer_login(customer_window)
+
 def display_gui():
     root = tk.Tk()
     root.title("Online Shop")
+    
+    # Set the root window size to laptop screen size
+    root.geometry("1366x768")
+    
+    # Create a function to exit fullscreen mode (optional)
+    def exit_fullscreen(event=None):
+        root.destroy()
 
+    root.bind("<Escape>", exit_fullscreen)  # Bind the Escape key to close the application
+    
     admin_button = tk.Button(root, text="Admin", command=admin_login)
     admin_button.pack(pady=10)
-
-    customer_button = tk.Button(root, text="Customer", command=customer_login)
+    
+    customer_button = tk.Button(root, text="Customer", command=lambda: start_customer_login(root))
     customer_button.pack(pady=10)
-
+    
     root.mainloop()
 
 if __name__ == "__main__":
