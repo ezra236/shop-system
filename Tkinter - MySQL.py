@@ -99,11 +99,8 @@ def admin_options():
     admin_options_window = tk.Toplevel()
     admin_options_window.title("Admin Options")
 
-    # Set the window to fullscreen
-    screen_width = admin_options_window.winfo_screenwidth()
-    screen_height = admin_options_window.winfo_screenheight()
-    admin_options_window.geometry(f"{screen_width}x{screen_height}")
-    admin_options_window.attributes('-fullscreen', True)
+    # Set the window size for a laptop screen
+    admin_options_window.geometry("1366x768")
 
     new_product_button = tk.Button(admin_options_window, text="Add New Product", command=add_new_product)
     new_product_button.pack(pady=10)
@@ -142,7 +139,7 @@ def customer_login(fullscreen_window):
         if not add_or_finish:
             break
     
-    # Destroy the fullscreen window when done
+    # Destroy the window when done
     fullscreen_window.destroy()
     
     display_receipt()
@@ -152,34 +149,28 @@ def display_receipt():
     messagebox.showinfo("Receipt", receipt)
 
 def start_customer_login(root):
-    # Create a fullscreen top-level window
-    fullscreen_window = tk.Toplevel(root)
-    fullscreen_window.title("Customer Interaction")
+    # Create a top-level window for customer login
+    customer_window = tk.Toplevel(root)
+    customer_window.title("Customer Interaction")
     
-    # Set the window size to the screen size
-    screen_width = fullscreen_window.winfo_screenwidth()
-    screen_height = fullscreen_window.winfo_screenheight()
-    
-    # Set the window size and make it fullscreen
-    fullscreen_window.geometry(f"{screen_width}x{screen_height}")
-    fullscreen_window.attributes('-fullscreen', True)
+    # Set the window size for a laptop screen
+    customer_window.geometry("1366x768")
 
-    # Call the customer login function with fullscreen_window as parent
-    customer_login(fullscreen_window)
+    # Call the customer login function with customer_window as parent
+    customer_login(customer_window)
 
 def display_gui():
     root = tk.Tk()
     root.title("Online Shop")
     
-    # Set the root window to fullscreen
-    root.attributes('-fullscreen', True)
+    # Set the root window size for a laptop screen
+    root.geometry("1366x768")
     
     # Create a function to exit fullscreen mode (optional)
     def exit_fullscreen(event=None):
-        root.attributes('-fullscreen', False)
         root.destroy()
 
-    root.bind("<Escape>", exit_fullscreen)  # Bind the Escape key to exit fullscreen mode
+    root.bind("<Escape>", exit_fullscreen)  # Bind the Escape key to close the application
     
     admin_button = tk.Button(root, text="Admin", command=admin_login)
     admin_button.pack(pady=100)
